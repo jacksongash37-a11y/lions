@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Brisbane Lions Talent Tracker</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Arial, sans-serif; background: #F7F7F7; color: #1A1A1A; min-height: 100vh; }
+  input, select, textarea {
+    font-family: Arial, sans-serif; font-size: 14px; color: #1A1A1A;
+    background: #fff; border: 1.5px solid #E0E0E0; border-radius: 6px;
+    padding: 10px 13px; width: 100%; outline: none;
+  }
+  input:focus, select:focus, textarea:focus { border-color: #5C0632; }
+  select { -webkit-appearance: none; padding-right: 34px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23777' stroke-width='1.5' fill='none'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center; }
+  label { font-size: 12px; font-weight: bold; color: #777; letter-spacing: 0.06em; text-transform: uppercase; display: block; margin-bottom: 6px; }
+  .btn-primary { background: #5C0632; color: #fff; border: none; padding: 12px 28px; font-family: Arial, sans-serif; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; }
+  .btn-ghost { background: transparent; color: #777; border: 1.5px solid #E0E0E0; padding: 10px 18px; font-family: Arial, sans-serif; font-size: 13px; border-radius: 6px; cursor: pointer; }
+  .card { background: #fff; border-radius: 10px; border: 1px solid #E0E0E0; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
+  .tab { padding: 10px 22px; font-family: Arial, sans-serif; font-size: 13px; font-weight: bold; border: none; background: transparent; cursor: pointer; border-bottom: 3px solid transparent; color: #777; }
+  .tab.active { color: #5C0632; border-bottom-color: #F2A900; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+  .status-ok  { padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; color: #2E7D32; background: #E8F5E9; border: 1px solid #A5D6A7; display: inline-block; }
+  .status-err { padding: 10px 16px; border-radius: 6px; font-size: 13px; font-weight: bold; color: #C62828; background: #FFEBEE; border: 1px solid #FFCDD2; display: inline-block; }
+  .script-box { background: #1A1A2E; border-radius: 8px; padding: 16px; margin-bottom: 16px; overflow-x: auto; }
+  .script-box pre { font-size: 11px; color: #A8D8A8; font-family: 'Courier New', monospace; line-height: 1.8; white-space: pre; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th { padding: 9px 14px; text-align: left; font-size: 11px; font-weight: bold; color: #777; letter-spacing: 0.07em; border-bottom: 1px solid #E0E0E0; background: #F5F5F5; }
+  td { padding: 10px 14px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; }
+  .pill { background: #fdf0f5; color: #5C0632; border-radius: 12px; padding: 2px 10px; font-size: 11px; font-weight: bold; }
+  .group-header { background: #5C0632; padding: 10px 20px; display: flex; align-items: center; gap: 10px; border-radius: 10px 10px 0 0; }
+  @media (max-width: 600px) { .grid2 { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div style="background:#5C0632;border-bottom:4px solid #F2A900;">
+  <div style="max-width:960px;margin:0 auto;padding:0 20px;display:flex;align-items:center;justify-content:space-between;height:70px;">
+    <div style="display:flex;align-items:center;gap:12px;">
+      <svg width="46" height="46" viewBox="0 0 100 100" fill="none">
+        <path d="M50 4 L90 20 L90 60 Q90 82 50 96 Q10 82 10 60 L10 20 Z" fill="#5C0632"/>
+        <path d="M50 4 L90 20 L90 60 Q90 82 50 96 Q10 82 10 60 L10 20 Z" fill="none" stroke="#F2A900" stroke-width="3"/>
+        <circle cx="50" cy="42" r="22" fill="#F2A900"/>
+        <circle cx="50" cy="42" r="18" fill="#E89800"/>
+        <circle cx="43" cy="39" r="3.5" fill="#5C0632"/>
+        <circle cx="57" cy="39" r="3.5" fill="#5C0632"/>
+        <circle cx="44" cy="38" r="1.2" fill="#fff"/>
+        <circle cx="58" cy="38" r="1.2" fill="#fff"/>
+        <ellipse cx="50" cy="45" rx="3" ry="2" fill="#5C0632"/>
+        <path d="M45 49 Q50 53 55 49" stroke="#5C0632" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <circle cx="50" cy="42" r="22" fill="none" stroke="#5C0632" stroke-width="5" stroke-dasharray="4 3"/>
+        <path d="M30 28 Q26 20 33 22 Q34 28 30 28Z" fill="#F2A900"/>
+        <path d="M70 28 Q74 20 67 22 Q66 28 70 28Z" fill="#F2A900"/>
+        <text x="50" y="88" text-anchor="middle" fill="#F2A900" font-size="9" font-family="Arial" font-weight="bold">LIONS</text>
+      </svg>
+      <div>
+        <div style="font-size:17px;font-weight:bold;color:#fff;letter-spacing:0.04em;">BRISBANE LIONS</div>
+        <div style="font-size:10px;color:#F2A900;letter-spacing:0.12em;margin-top:2px;">TALENT DATABASE</div>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <span id="dot" style="width:8px;height:8px;border-radius:50%;background:#EF5350;display:inline-block;"></span>
+      <span id="connText" style="font-size:11px;color:rgba(255,255,255,0.7);">NOT CONNECTED</span>
+      <button class="btn-ghost" onclick="toggleSetup()" id="connBtn" style="color:#fff;border-color:rgba(255,255,255,0.3);font-size:12px;padding:7px 14px;">Connect Sheets</button>
+    </div>
+  </div>
+</div>
+<div style="height:4px;background:#F2A900;"></div>
+
+<!-- TABS -->
+<div style="background:#fff;border-bottom:1px solid #E0E0E0;">
+  <div style="max-width:960px;margin:0 auto;padding:0 20px;display:flex;">
+    <button class="tab active" id="tabEntry" onclick="switchTab('entry')">New Entry</button>
+    <button class="tab" id="tabRecords" onclick="switchTab('records')">Records</button>
+  </div>
+</div>
+
+<div style="max-width:960px;margin:0 auto;padding:24px 20px;">
+
+  <!-- SETUP PANEL -->
+  <div id="setupPanel" style="display:none;background:#fff;border-radius:10px;border:1px solid #E0E0E0;border-left:4px solid #F2A900;padding:24px;margin-bottom:24px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+      <div style="font-size:15px;font-weight:bold;color:#5C0632;">Connect to Google Sheets</div>
+      <button class="btn-ghost" onclick="toggleSetup()" style="padding:5px 12px;">✕</button>
+    </div>
+    <div style="background:#F9F9F9;border-radius:8px;padding:14px;margin-bottom:14px;font-size:13px;color:#444;line-height:1.8;">
+      <b>1.</b> Open your Google Sheet → Extensions → Apps Script<br>
+      <b>2.</b> Paste the script below → Deploy as Web App → access: <b>Anyone</b><br>
+      <b>3.</b> Copy the Web App URL (ends in /exec) and paste below
+    </div>
+    <div class="script-box">
+<pre>function doPost(e) {
+  try {
+    var ss = SpreadsheetApp.openById("YOUR_SPREADSHEET_ID_HERE");
+    var data = JSON.parse(e.postData.contents);
+    var d = data.data;
+    var sheetName = d.yob + " " + d.gender;
+    var sheet = ss.getSheetByName(sheetName);
+    if (!sheet) sheet = ss.insertSheet(sheetName);
+    var headers = ["Name","YOB","Gender","Club","Jersey","AFL Position","Notes","Flag","Updated"];
+    if (sheet.getLastRow() === 0) sheet.appendRow(headers);
+    var rows = sheet.getLastRow() > 1 ?
+      sheet.getRange(2,1,sheet.getLastRow()-1,3).getValues() : [];
+    var rowIdx = -1;
+    for (var i = 0; i < rows.length; i++) {
+      if (rows[i][0]===d.name && String(rows[i][1])===String(d.yob) && rows[i][2]===d.gender) {
+        rowIdx = i; break;
+      }
+    }
+    var vals = [d.name,d.yob,d.gender,d.team,d.jersey,d.position,d.notes,d.flag,new Date()];
+    if (rowIdx >= 0) sheet.getRange(rowIdx+2,1,1,9).setValues([vals]);
+    else sheet.appendRow(vals);
+    return ContentService.createTextOutput("ok");
+  } catch(err) {
+    return ContentService.createTextOutput("error: " + err.toString());
+  }
+}</pre>
+    </div>
+    <div style="display:flex;gap:10px;">
+      <input type="text" id="urlInput" placeholder="https://script.google.com/macros/s/.../exec"/>
+      <button class="btn-primary" onclick="saveUrl()">Save</button>
+    </div>
+  </div>
+
+  <!-- ENTRY FORM -->
+  <div id="entryPanel" class="card" style="padding:28px;">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px;padding-bottom:16px;border-bottom:2px solid #F5F5F5;">
+      <div>
+        <div style="font-size:16px;font-weight:bold;color:#5C0632;">Player Entry Form</div>
+        <div style="font-size:12px;color:#777;margin-top:3px;" id="sheetTarget">Select year of birth and gender to assign to a sheet</div>
+      </div>
+      <div id="sheetBadge" style="display:none;background:#fdf0f5;border:1px solid #f0c0d0;border-radius:20px;padding:5px 14px;font-size:12px;font-weight:bold;color:#5C0632;"></div>
+    </div>
+
+    <div class="grid2">
+      <div><label>Full Name <span style="color:#F2A900;">*</span></label><input type="text" id="f_name" placeholder="e.g. Jordan Smith" oninput="updateBadge()"/></div>
+      <div><label>Year of Birth <span style="color:#F2A900;">*</span></label>
+        <select id="f_yob" onchange="updateBadge()">
+          <option value="">Select year</option>
+          <option>2009</option><option>2010</option><option>2011</option><option>2012</option>
+          <option>2013</option><option>2014</option><option>2015</option>
+        </select>
+      </div>
+      <div><label>Gender <span style="color:#F2A900;">*</span></label>
+        <select id="f_gender" onchange="updateBadge()">
+          <option value="">Select gender</option><option>Boys</option><option>Girls</option>
+        </select>
+      </div>
+      <div><label>Club <span style="color:#F2A900;">*</span></label><input type="text" id="f_team" placeholder="e.g. Aspley Hornets"/></div>
+      <div><label>Jersey #</label><input type="text" id="f_jersey" placeholder="e.g. 7"/></div>
+      <div><label>AFL Position</label>
+        <select id="f_position">
+          <option value="">Select position</option>
+          <option>Key Forward</option><option>Forward Pocket</option><option>Small Forward</option>
+          <option>Centre Half Forward</option><option>Midfielder</option><option>Inside Midfielder</option>
+          <option>Wing</option><option>Centre</option><option>Centre Half Back</option>
+          <option>Half Back Flanker</option><option>Key Defender</option><option>Sweeper</option>
+          <option>Ruck</option><option>Ruck Rover</option><option>Rover</option>
+        </select>
+      </div>
+    </div>
+
+    <div style="margin-bottom:18px;">
+      <label>Scout Notes</label>
+      <textarea id="f_notes" rows="4" placeholder="Observations, attributes, standout qualities..." style="resize:vertical;"></textarea>
+    </div>
+
+    <div style="margin-bottom:22px;">
+      <label>Flag</label>
+      <select id="f_flag">
+        <option value="">None</option>
+        <option>Yes</option>
+        <option>⭐ Standout</option>
+        <option>L1 Consider</option>
+        <option>See again</option>
+        <option>Develop - height</option>
+        <option>Consider for younger age group</option>
+        <option>Database only</option>
+      </select>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <button class="btn-primary" onclick="handleSubmit()">Save to Google Sheets</button>
+      <button class="btn-ghost" onclick="clearForm()">Clear Form</button>
+      <div id="formStatus"></div>
+    </div>
+  </div>
+
+  <!-- RECORDS -->
+  <div id="recordsPanel" style="display:none;">
+    <div id="recordsEmpty" class="card" style="padding:48px;text-align:center;">
+      <div style="font-size:40px;margin-bottom:12px;">🦁</div>
+      <div style="font-size:16px;font-weight:bold;color:#5C0632;margin-bottom:6px;">No records yet</div>
+      <div style="font-size:13px;color:#777;">Players saved this session will appear here</div>
+    </div>
+    <div id="recordsList" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+        <div id="recordCount" style="font-size:14px;font-weight:bold;color:#5C0632;"></div>
+        <input type="text" id="searchInput" placeholder="Search..." style="width:200px;" oninput="renderRecords()"/>
+      </div>
+      <div id="recordsContent"></div>
+      <div style="font-size:11px;color:#BBBBBB;text-align:center;margin-top:8px;">Click any row to edit</div>
+    </div>
+  </div>
+
+</div>
+
+<div style="border-top:1px solid #E0E0E0;margin-top:40px;padding:16px 24px;text-align:center;">
+  <span style="font-size:11px;color:#BBBBBB;letter-spacing:0.06em;">BRISBANE LIONS FOOTBALL CLUB · TALENT DATABASE · INTERNAL USE ONLY</span>
+</div>
+
+<script>
+var records = [];
+var scriptUrl = localStorage.getItem("lions_script_url") || "";
+if (scriptUrl) { document.getElementById("urlInput").value = scriptUrl; setConnected(true); }
+
+function setConnected(yes) {
+  document.getElementById("dot").style.background = yes ? "#4CAF50" : "#EF5350";
+  document.getElementById("connText").textContent = yes ? "SHEETS CONNECTED" : "NOT CONNECTED";
+  document.getElementById("connBtn").textContent  = yes ? "Edit Connection"  : "Connect Sheets";
+}
+
+function toggleSetup() {
+  var p = document.getElementById("setupPanel");
+  p.style.display = p.style.display === "none" ? "block" : "none";
+}
+
+function saveUrl() {
+  var url = document.getElementById("urlInput").value.trim();
+  if (!url) return;
+  scriptUrl = url;
+  localStorage.setItem("lions_script_url", url);
+  setConnected(true);
+  document.getElementById("setupPanel").style.display = "none";
+}
+
+function switchTab(tab) {
+  document.getElementById("entryPanel").style.display   = tab === "entry"   ? "block" : "none";
+  document.getElementById("recordsPanel").style.display = tab === "records" ? "block" : "none";
+  document.getElementById("tabEntry").className   = "tab" + (tab === "entry"   ? " active" : "");
+  document.getElementById("tabRecords").className = "tab" + (tab === "records" ? " active" : "");
+  if (tab === "records") renderRecords();
+}
+
+function updateBadge() {
+  var yob = document.getElementById("f_yob").value;
+  var gen = document.getElementById("f_gender").value;
+  var badge  = document.getElementById("sheetBadge");
+  var target = document.getElementById("sheetTarget");
+  if (yob && gen) {
+    var n = yob + " " + gen;
+    badge.textContent = "📋 " + n;
+    badge.style.display = "block";
+    target.innerHTML = "Will be added to: <strong style='color:#5C0632'>" + n + "</strong>";
+  } else {
+    badge.style.display = "none";
+    target.textContent = "Select year of birth and gender to assign to a sheet";
+  }
+}
+
+function getForm() {
+  return {
+    name:     document.getElementById("f_name").value.trim(),
+    yob:      document.getElementById("f_yob").value,
+    gender:   document.getElementById("f_gender").value,
+    team:     document.getElementById("f_team").value.trim(),
+    jersey:   document.getElementById("f_jersey").value.trim(),
+    position: document.getElementById("f_position").value,
+    notes:    document.getElementById("f_notes").value.trim(),
+    flag:     document.getElementById("f_flag").value,
+  };
+}
+
+function clearForm() {
+  ["f_name","f_team","f_jersey","f_notes"].forEach(function(id){ document.getElementById(id).value = ""; });
+  ["f_yob","f_gender","f_position","f_flag"].forEach(function(id){ document.getElementById(id).selectedIndex = 0; });
+  updateBadge();
+  document.getElementById("formStatus").innerHTML = "";
+}
+
+function setStatus(type, msg) {
+  var el = document.getElementById("formStatus");
+  el.innerHTML = "<div class='" + (type==="ok" ? "status-ok" : "status-err") + "'>" + (type==="ok"?"✓ ":"⚠ ") + msg + "</div>";
+  if (type === "ok") setTimeout(function(){ el.innerHTML = ""; }, 6000);
+}
+
+function handleSubmit() {
+  var d = getForm();
+  if (!d.name)   { setStatus("err","Please fill in: Full Name"); return; }
+  if (!d.yob)    { setStatus("err","Please fill in: Year of Birth"); return; }
+  if (!d.gender) { setStatus("err","Please fill in: Gender"); return; }
+  if (!d.team)   { setStatus("err","Please fill in: Club"); return; }
+  if (!scriptUrl){ toggleSetup(); return; }
+
+  var sheetName = d.yob + " " + d.gender;
+  d.timestamp = new Date().toISOString();
+
+  fetch(scriptUrl, {
+    method: "POST",
+    mode: "no-cors",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ sheet: sheetName, data: d })
+  });
+
+  var idx = records.findIndex(function(r){ return r.name===d.name && r.yob===d.yob && r.gender===d.gender; });
+  if (idx >= 0) records[idx] = JSON.parse(JSON.stringify(d));
+  else records.push(JSON.parse(JSON.stringify(d)));
+
+  document.getElementById("tabRecords").textContent = "Records (" + records.length + ")";
+  setStatus("ok", d.name + " sent to " + sheetName + " — check your Google Sheet to confirm");
+  clearForm();
+}
+
+function renderRecords() {
+  var search = (document.getElementById("searchInput").value || "").toLowerCase();
+  var filtered = records.filter(function(r){
+    return Object.values(r).some(function(v){ return String(v).toLowerCase().indexOf(search) >= 0; });
+  });
+
+  document.getElementById("recordsEmpty").style.display = records.length === 0 ? "block" : "none";
+  document.getElementById("recordsList").style.display  = records.length === 0 ? "none"  : "block";
+  document.getElementById("recordCount").textContent = records.length + " player" + (records.length !== 1 ? "s" : "") + " this session";
+
+  var groups = {};
+  filtered.forEach(function(r){
+    var key = (r.yob || "?") + " " + (r.gender || "?");
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(r);
+  });
+
+  var html = "";
+  Object.keys(groups).sort().forEach(function(group){
+    var grp = groups[group];
+    html += "<div class='card' style='margin-bottom:16px;overflow:hidden;'>";
+    html += "<div class='group-header'><span style='font-size:13px;font-weight:bold;color:#F2A900;letter-spacing:0.06em;'>" + group.toUpperCase() + "</span>";
+    html += "<span style='font-size:11px;color:rgba(255,255,255,0.6);background:rgba(255,255,255,0.1);border-radius:10px;padding:1px 8px;'>" + grp.length + "</span></div>";
+    html += "<div style='overflow-x:auto;'><table><thead><tr><th>#</th><th>NAME</th><th>CLUB</th><th>POSITION</th><th>FLAG</th><th>NOTES</th></tr></thead><tbody>";
+    grp.forEach(function(r){
+      var ri = records.indexOf(r);
+      html += "<tr onclick='loadRecord(" + ri + ")'>";
+      html += "<td style='color:#999;'>" + (r.jersey||"—") + "</td>";
+      html += "<td style='font-weight:bold;'>" + r.name + "</td>";
+      html += "<td style='color:#777;'>" + (r.team||"—") + "</td>";
+      html += "<td><span class='pill'>" + (r.position||"—") + "</span></td>";
+      html += "<td style='font-size:12px;color:#5C0632;font-weight:bold;'>" + (r.flag||"—") + "</td>";
+      html += "<td style='color:#777;font-size:12px;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;'>" + (r.notes||"—") + "</td>";
+      html += "</tr>";
+    });
+    html += "</tbody></table></div></div>";
+  });
+  document.getElementById("recordsContent").innerHTML = html;
+}
+
+function loadRecord(idx) {
+  var r = records[idx];
+  if (!r) return;
+  document.getElementById("f_name").value     = r.name     || "";
+  document.getElementById("f_yob").value      = r.yob      || "";
+  document.getElementById("f_gender").value   = r.gender   || "";
+  document.getElementById("f_team").value     = r.team     || "";
+  document.getElementById("f_jersey").value   = r.jersey   || "";
+  document.getElementById("f_position").value = r.position || "";
+  document.getElementById("f_notes").value    = r.notes    || "";
+  document.getElementById("f_flag").value     = r.flag     || "";
+  updateBadge();
+  switchTab("entry");
+}
+</script>
+</body>
+</html>
